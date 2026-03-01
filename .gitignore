@@ -1,2 +1,5 @@
 .env
 ls
+*.pem
+\__pycache__
+*.pyc
