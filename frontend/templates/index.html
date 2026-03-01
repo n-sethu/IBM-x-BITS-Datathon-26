@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MarketSignals — Macro Dashboard</title>
+  <script src="{{ url_for('static', filename='plotly.min.js') }}"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+</head>
+<body>
+  <!-- ── HEADER ──────────────────────────────────────── -->
+  <header class="top-bar">
+    <div class="brand">
+      <span class="brand-icon">📈</span>
+      <span class="brand-name">MarketSignals</span>
+      <span class="brand-sub">FRED Macro Dashboard</span>
+    </div>
+    <div class="header-meta">
+      <span id="last-updated">Loading…</span>
+    </div>
+  </header>
+
+  <!-- ── DEMO NOTICE (shown only when live API unavailable) ──── -->
+  <div id="demo-banner" style="display:none;background:#21262d;border-bottom:1px solid #f0883e;padding:8px 28px;font-size:0.78rem;color:#f0883e;">
+    ★ <strong>Demo Mode</strong> — FRED API unreachable in this environment. Charts show realistic generated data. Run locally with internet access to see live FRED data.
+  </div>
+
+  <!-- ── MAIN LAYOUT ────────────────────────────────── -->
+  <main class="container">
+
+    <!-- ── CONTROLS ─────────────────────────────────── -->
+    <section class="controls-bar card">
+      <div class="control-group">
+        <label>Timeframe</label>
+        <div class="btn-group" id="timeframe-btns">
+          <button class="btn-tf" data-years="1">1Y</button>
+          <button class="btn-tf active" data-years="5">5Y</button>
+          <button class="btn-tf" data-years="10">10Y</button>
+          <button class="btn-tf" data-years="20">20Y</button>
+          <button class="btn-tf" data-years="all">All</button>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label>Custom Range</label>
+        <input type="date" id="date-start" />
+        <span>—</span>
+        <input type="date" id="date-end" />
+        <button class="btn-apply" id="apply-range">Apply</button>
+      </div>
+
+      <div class="control-group">
+        <label>Series</label>
+        <div id="series-toggles" class="series-toggles"></div>
+      </div>
+    </section>
+
+    <!-- ── CHART TABS ────────────────────────────────── -->
+    <section class="chart-section card">
+      <div class="tab-bar">
+        <button class="tab active" data-tab="overlay">Overlay Chart</button>
+        <button class="tab" data-tab="mispricing">Mid vs End-of-Month</button>
+        <button class="tab" data-tab="score">Mispricing Score</button>
+      </div>
+
+      <!-- Overlay tab -->
+      <div class="tab-content active" id="tab-overlay">
+        <div class="chart-toolbar">
+          <span class="hint">Select series above · Hover for exact values · Drag to zoom · Double-click to reset</span>
+        </div>
+        <div id="overlay-chart" class="plotly-chart"></div>
+      </div>
+
+      <!-- Mid vs EOM tab -->
+      <div class="tab-content" id="tab-mispricing">
+        <div class="chart-toolbar">
+          <label>Series for analysis:</label>
+          <select id="mm-series-select">
+            <!-- populated by JS -->
+          </select>
+        </div>
+        <div id="mm-chart" class="plotly-chart"></div>
+      </div>
+
+      <!-- Score tab -->
+      <div class="tab-content" id="tab-score">
+        <div class="chart-toolbar">
+          <label>Series for score:</label>
+          <select id="score-series-select">
+            <!-- populated by JS -->
+          </select>
+          <span class="hint" id="score-avg-label"></span>
+        </div>
+        <div id="score-chart" class="plotly-chart"></div>
+      </div>
+    </section>
+
+    <!-- ── STATS CARDS ─────────────────────────────── -->
+    <section id="stats-row" class="stats-row"></section>
+
+    <!-- ── INDIVIDUAL CHARTS GRID ─────────────────── -->
+    <section class="card" id="individual-section">
+      <h3 class="section-title">Individual Series</h3>
+      <div id="individual-grid" class="individual-grid"></div>
+    </section>
+
+    <!-- ── CONCEPT NOTE ───────────────────────────── -->
+    <section class="card concept-note">
+      <h3>💡 Concept — Market Signals as Early Indicators of Macro Data</h3>
+      <p>
+        <strong>Hypothesis:</strong> Mid-month market snapshots can forecast end-of-month
+        FRED macro releases (GDP, unemployment, inflation, Fed funds rate).
+      </p>
+      <ul>
+        <li>📊 <strong>Overlay Chart:</strong> compare multiple FRED series over the same timeframe.</li>
+        <li>🔀 <strong>Mid vs End-of-Month:</strong> compare intra-month signal vs official release.</li>
+        <li>📉 <strong>Mispricing Score:</strong> % difference between mid-month proxy and EOM actual — larger bars indicate larger "belief vs reality" gaps.</li>
+      </ul>
+      <p class="note-source">Data sourced from the Federal Reserve Bank of St. Louis (FRED) via public API.</p>
+    </section>
+
+  </main>
+
+  <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+</body>
+</html>
